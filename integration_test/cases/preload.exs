@@ -37,10 +37,21 @@ defmodule Ecto.Integration.PreloadTest do
 
     assert %Ecto.Association.NotLoaded{} = p1.comments
 
+    [p1, p1] = TestRepo.preload([p1, p1], :comments)
+    assert [%Comment{id: ^cid1}, %Comment{id: ^cid2}] = p1.comments |> sort_by_id
+
     [p3, p1, p2] = TestRepo.preload([p3, p1, p2], :comments)
     assert [%Comment{id: ^cid1}, %Comment{id: ^cid2}] = p1.comments |> sort_by_id
     assert [%Comment{id: ^cid3}, %Comment{id: ^cid4}] = p2.comments |> sort_by_id
     assert [] = p3.comments
+
+    [p3, p1, p2] = TestRepo.preload([p3, p1, p2], :comments)
+    assert [%Comment{id: ^cid1}, %Comment{id: ^cid2}] = p1.comments |> sort_by_id
+    assert [%Comment{id: ^cid3}, %Comment{id: ^cid4}] = p2.comments |> sort_by_id
+    assert [] = p3.comments
+
+    [p1, p1] = TestRepo.preload([p1, p1], :comments)
+    assert [%Comment{id: ^cid1}, %Comment{id: ^cid2}] = p1.comments |> sort_by_id
   end
 
   test "preload has_one" do
